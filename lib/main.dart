@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:quizzler/Question.dart';
+import 'package:quizzler/quiz_brain.dart';
 
 void main() => runApp(
       MaterialApp(
@@ -21,34 +21,9 @@ class QuizzPage extends StatefulWidget {
 }
 
 class _QuizzPageState extends State<QuizzPage> {
-
   List<Widget> scoreKeeper = [];
 
-  List<Question> questionBank = [
-    Question(q: 'The highest mountain is mount Everest', a: true),
-    Question(q: 'Horses are only black', a: false),
-    Question(q: 'Madrid is Spain\' Capital', a: true),
-    Question(q: 'In human body 25 percent of bones are in the feet', a:true),
-    Question(
-        q:'The loudest sound produced by any animal is 188 decibels. That animal is the African Elephant.',
-        a:false),
-    Question(q:'You can lead a cow down stairs but not up stairs.', a:false),
-    Question(
-        q:'The total surface area of two human lungs is approximately 70 square metres.',
-        a:true),
-    Question( q:'Google was originally called \"Backrub\".', a:true),
-    Question(
-        q:'Chocolate affects a dog\'s heart and nervous system; a few ounces are enough to kill a small dog.',
-        a:true),
-    Question(
-        q:'In West Virginia, USA, if you accidentally hit an animal with your car, you are free to take it home to eat.',
-        a:true),
-    Question(
-        q:'No piece of square dry paper can be folded in half more than 7 times.',
-        a:false),
-  ];
-
-  int questionNumber = 0;
+  QuizBrain quizBrain = QuizBrain();
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +37,7 @@ class _QuizzPageState extends State<QuizzPage> {
             padding: const EdgeInsets.all(10.0),
             child: Center(
                 child: Text(
-              questionBank[questionNumber].questionText,
+              quizBrain.getQuestionText(),
               style: TextStyle(color: Colors.white, fontSize: 25.0),
             )),
           ),
@@ -74,19 +49,23 @@ class _QuizzPageState extends State<QuizzPage> {
               color: Colors.green,
               onPressed: () {
                 setState(() {
-                  if (questionBank[questionNumber].questionAnswer == true) {
+                  bool correctAnswer = quizBrain.getQuestionAnswer();
+
+                  if (correctAnswer == true) {
                     scoreKeeper.add(Icon(Icons.check, color: Colors.green));
                   } else {
                     scoreKeeper.add(Icon(Icons.close, color: Colors.red));
                   }
-                  if (questionBank.length == questionNumber + 1) {
-                    questionNumber = 0;
-                  } else {
-                    questionNumber++;
-                  }
+                  quizBrain.nextQuestion();
                 });
               },
-              child: Text('True'),
+              child: Text(
+                'True',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 25.0),
+              ),
             ),
           ),
         ),
@@ -97,21 +76,24 @@ class _QuizzPageState extends State<QuizzPage> {
               color: Colors.red,
               onPressed: () {
                 setState(() {
-                  if (questionBank[questionNumber].questionAnswer == false) {
+                  bool correctAnswer = quizBrain.getQuestionAnswer();
+
+                  if (correctAnswer == false) {
                     scoreKeeper.add(Icon(Icons.check, color: Colors.green));
                   } else {
                     scoreKeeper.add(Icon(Icons.close, color: Colors.red));
                   }
-                  print('questionBank.length = $questionBank.length ');
-                  print('questionNumber = $questionNumber');
-                  if (questionBank.length == questionNumber + 1) {
-                    questionNumber = 0;
-                  } else {
-                    questionNumber++;
-                  }
+
+                  quizBrain.nextQuestion();
                 });
               },
-              child: Text('False'),
+              child: Text(
+                'False',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 25.0),
+              ),
             ),
           ),
         ),
