@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:quizzler/quiz_brain.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 void main() => runApp(
       MaterialApp(
@@ -25,6 +26,33 @@ class _QuizzPageState extends State<QuizzPage> {
 
   QuizBrain quizBrain = QuizBrain();
 
+  void checkAnswer(bool userPickedAnswer) {
+    setState(() {
+      if (quizBrain.isFinished()) {
+        Alert(
+                context: context,
+                title: "Info",
+                desc: "You have reached out the end of the quiz.")
+            .show();
+        quizBrain.reset();
+        scoreKeeper = [];
+      } else {
+        bool correctAnswer = quizBrain.getQuestionAnswer();
+
+        if (correctAnswer == userPickedAnswer) {
+          scoreKeeper.add(
+            Icon(Icons.check, color: Colors.green),
+          );
+        } else {
+          scoreKeeper.add(
+            Icon(Icons.close, color: Colors.red),
+          );
+        }
+        quizBrain.nextQuestion();
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -48,16 +76,7 @@ class _QuizzPageState extends State<QuizzPage> {
             child: FlatButton(
               color: Colors.green,
               onPressed: () {
-                setState(() {
-                  bool correctAnswer = quizBrain.getQuestionAnswer();
-
-                  if (correctAnswer == true) {
-                    scoreKeeper.add(Icon(Icons.check, color: Colors.green));
-                  } else {
-                    scoreKeeper.add(Icon(Icons.close, color: Colors.red));
-                  }
-                  quizBrain.nextQuestion();
-                });
+                checkAnswer(true);
               },
               child: Text(
                 'True',
@@ -75,17 +94,7 @@ class _QuizzPageState extends State<QuizzPage> {
             child: FlatButton(
               color: Colors.red,
               onPressed: () {
-                setState(() {
-                  bool correctAnswer = quizBrain.getQuestionAnswer();
-
-                  if (correctAnswer == false) {
-                    scoreKeeper.add(Icon(Icons.check, color: Colors.green));
-                  } else {
-                    scoreKeeper.add(Icon(Icons.close, color: Colors.red));
-                  }
-
-                  quizBrain.nextQuestion();
-                });
+                checkAnswer(false);
               },
               child: Text(
                 'False',
